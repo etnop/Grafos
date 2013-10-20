@@ -2,6 +2,7 @@
 
 namespace src;
 use src\Grafo;
+use \SplQueue;
 
 class Caminho {
     
@@ -11,7 +12,7 @@ class Caminho {
     
     public function __construct(Grafo $g, $s) {
         $this->inicio = $s;
-        $this->dfs($g, $s);
+        $this->bfs($g, $s);
     }
     
     public function dfs(Grafo $g, $v){
@@ -21,6 +22,23 @@ class Caminho {
                 $this->arestaPara[$vertice] = $v;
                 $this->dfs ($g, $vertice); 
             }
+    }
+    
+    public function bfs(Grafo $g, $inicio){
+        $queue = new SplQueue();
+        $this->visitado[$inicio] = TRUE;
+        $queue->enqueue($inicio);
+        
+        while( !$queue->isEmpty() ){
+            $v = $queue->dequeue();
+            foreach ($g->getAdj($v) as $vertice) {
+                if( !$this->visitado[$vertice] ){
+                    $this->arestaPara[$vertice] = $v;
+                    $this->visitado[$vertice] = TRUE;
+                    $queue->enqueue($vertice);
+                }
+            }
+        }
     }
     
     public function haCaminhoPara( $v ){
